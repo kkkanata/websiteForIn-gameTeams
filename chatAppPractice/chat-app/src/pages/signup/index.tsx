@@ -13,6 +13,7 @@ import { Field } from '../../components/ui/field'
 import { Button } from '../../components/ui/button'
 import { Toaster, toaster } from '../../components/ui/toaster'
 import { FormEvent, useState } from 'react'
+import { useRouter } from '@src/hooks/useRouter/useRouter'
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -24,6 +25,7 @@ export const Page = () => {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { push } = useRouter()
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     setIsLoading(true)
@@ -44,6 +46,7 @@ export const Page = () => {
         type: 'success',
         //description: "File saved successfully to the server",
       })
+      push((path) => path.chat.$url())
     } catch (e) {
       toaster.error({
         title: 'エラーが発生しました。',

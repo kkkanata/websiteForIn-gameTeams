@@ -1,20 +1,24 @@
-import { chakra, Container, Heading } from '@chakra-ui/react'
+import { Flex, chakra, Container, Heading, Spacer } from '@chakra-ui/react'
 import { Button } from '../../components/ui/button'
+import { Avatar } from '../../components/ui/avatar'
 import { useAuthContext } from '@src/feature/auth/provider/AuthProvider'
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '../../components/ui/menu'
+
 import { FirebaseError } from '@firebase/util'
 import { getAuth, signOut } from 'firebase/auth'
-//import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from '@src/hooks/useRouter/useRouter'
 import { Toaster, toaster } from '../../components/ui/toaster'
-import { useState } from 'react'
+import { Navigate } from '@src/component/Navigate/Navigate'
 
 export const Header = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { user } = useAuthContext()
-  //const [isLoading, setIsLoading] = useState<boolean>(false)
   const { push } = useRouter()
   const handleSignOut = async () => {
-    setIsLoading(true)
     try {
       const auth = getAuth()
       await signOut(auth)
@@ -23,7 +27,7 @@ export const Header = () => {
         type: 'success',
         //description: "File saved successfully to the server",
       })
-      push('/signin')
+      push((path) => path.signin.$url())
     } catch (e) {
       if (e instanceof FirebaseError) {
         toaster.error({
@@ -32,28 +36,42 @@ export const Header = () => {
           //description: "File saved successfully to the server",
         })
       }
-    } finally {
-      setIsLoading(false)
     }
   }
   return (
     <chakra.header py={4} bgColor={'blue.600'}>
       <Container maxW={'container.lg'}>
-        <Heading color={'white'}>
-          <Toaster />
+        <Toaster />
+        <Flex>
+          <Heading color={'white'} _hover={{ color: 'green' }}>
+            {' '}
+            <Navigate href={(path) => path.$url()}>
+              Firebase Realtime Chat
+            </Navigate>
+          </Heading>
+
+          <Spacer aria-hidden />
           {user ? (
-            <Button
-              colorScheme={'teal'}
-              loading={isLoading}
-              loadingText="サインアウト中"
-              onClick={handleSignOut}
-            >
-              サインアウト
-            </Button>
+            <MenuRoot>
+              <MenuTrigger asChild>
+                <Button>
+                  <Avatar flexShrink={0} width={10} height={10} />
+                </Button>
+              </MenuTrigger>
+              <MenuContent>
+                <MenuItem value="move to signinPage" onClick={handleSignOut}>
+                  サインアウト
+                </MenuItem>
+              </MenuContent>
+            </MenuRoot>
           ) : (
-            'ログアウト中'
+            <Button colorScheme={'teal'}>
+              <Navigate href={(path) => path.signin.$url()}>
+                サインイン
+              </Navigate>
+            </Button>
           )}
-        </Heading>
+        </Flex>
       </Container>
     </chakra.header>
   )
