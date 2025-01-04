@@ -1,0 +1,38 @@
+usersテーブル:
+
+    id (INTEGER PRIMARY KEY AUTOINCREMENT): ユーザーID
+    name (TEXT): ユーザー名
+    email (文字列): 今回セキュリティリスクを軽減するため外部サービスのemailは使用せずサービス内で一意のユーザ名とパスワードで認証するようにしますそのためこのカラムは必要ありません
+    password (TEXT): パスワード（ハッシュ化して保存することを推奨）
+    その他必要なユーザー情報
+
+postsテーブル:
+
+    id (INTEGER PRIMARY KEY AUTOINCREMENT): 投稿ID
+    user_id (INTEGER, FOREIGN KEY referencing users.id): 投稿者ID
+    type (TEXT): 投稿タイプ（"event"または"blog"）
+    title (TEXT): タイトル
+    content (TEXT): 本文
+    created_at (TEXT): 投稿日時（ISO 8601形式の文字列で保存することを推奨）
+    thumbnail_url (TEXT): サムネイル画像のURL
+    イベント情報の場合：
+    event_start_datetime (TEXT): イベント開始日時
+    event_end_datetime (TEXT): イベント終了日時
+    event_place (TEXT): イベント開催場所
+    その他必要な投稿情報
+
+albumsテーブル:
+
+    id (INTEGER PRIMARY KEY AUTOINCREMENT): アルバムID
+    user_id (INTEGER, FOREIGN KEY referencing users.id): 作成者ID
+    name (TEXT): アルバム名
+    description (TEXT): 説明
+    cover_image_url (TEXT): カバー画像のURL
+    
+album_itemsテーブル:
+
+    id (INTEGER PRIMARY KEY AUTOINCREMENT): アルバムアイテムID
+    album_id (INTEGER, FOREIGN KEY referencing albums.id): 所属アルバムID
+    url (TEXT): 動画/画像のURL
+    title (TEXT): 動画/画像のタイトル
+    description (TEXT): 動画/画像の説明
